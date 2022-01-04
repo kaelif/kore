@@ -32,7 +32,7 @@ connection.connect();
 var Request = require('tedious').Request;
 
 function executeStatement() {
-    request = new Request("SELECT c.CustomerID AS id, c.LastName + ', ' + c.FirstName AS [Name],	c.Title + ' ' + c.FirstName + ' ' + c.LastName AS FullName, c.EmailAddress AS Email, c.Phone FROM SalesLT.Customer c WHERE c.FirstName IS NOT NULL AND c.LastName IS NOT NULL AND c.EmailAddress IS NOT NULL AND c.Phone IS NOT NULL ORDER BY c.LastName, c.FirstName", function (err, rowCount, rows) {
+    request = new Request("SELECT c.CustomerID AS id, CONCAT(c.lastName, CASE WHEN (ISNULL(c.firstName, '') = '' OR ISNULL(c.lastName, '') = '') THEN + c.firstName ELSE + ', ' + c.firstName END) AS [Name], ISNULL(c.Title, '') + ' ' + c.FirstName + ' ' + c.LastName AS FullName, c.EmailAddress AS Email, c.Phone FROM SalesLT.Customer c WHERE ( ISNULL(c.firstName, '') != ''  OR ISNULL(c.lastName, '') != '' ) AND c.EmailAddress IS NOT NULL AND c.Phone IS NOT NULL ORDER BY c.LastName, c.FirstName", function (err, rowCount, rows) {
         if (err) {
             console.log(err)
         } else {
